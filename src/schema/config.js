@@ -1,23 +1,24 @@
-// {
-//   "development": {
-//     "username": "root",
-//     "password": null,
-//     "database": "database_development",
-//     "host": "127.0.0.1",
-//     "dialect": "mysql"
-//   },
-//   "test": {
-//     "username": "root",
-//     "password": null,
-//     "database": "database_test",
-//     "host": "127.0.0.1",
-//     "dialect": "mysql"
-//   },
-//   "production": {
-//     "username": "root",
-//     "password": null,
-//     "database": "database_production",
-//     "host": "127.0.0.1",
-//     "dialect": "mysql"
-//   }
-// }
+require('dotenv').config()
+
+const env = process.env.NODE_ENV || 'development'
+const databaseUrl = process.env.DATABASE_URL
+const username = process.env.POSTGRES_USERNAME
+const password = process.env.POSTGRES_PASSWORD
+const database = process.env.POSTGRES_DATABASE
+const host = process.env.POSTGRES_HOST
+const port = process.env.POSTGRES_PORT
+const dialect = 'postgres'
+
+module.exports = {
+  [env]: {
+    databaseUrl,
+    dialect,
+    username,
+    password,
+    database,
+    host,
+    port,
+    migrationStorageTableName: '_migrations'
+  }
+}
+
