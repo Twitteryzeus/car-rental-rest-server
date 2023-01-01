@@ -34,7 +34,7 @@ const verifyOTP = async (req, res) => {
     await UserSessionModel.create(userSessionInput, { transaction });
 
     await transaction.commit();
-    res.status(200).json({ message: 'OTP Verified Successfully!' });
+    res.status(200).json({ message: 'OTP Verified Successfully!', token: userSessionInput.token });
   } catch (error) {
     if (transaction) {
       await transaction.rollback();
