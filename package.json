@@ -27,6 +27,7 @@
     "moment": "2.29.4",
     "pg": "8.8.0",
     "pg-hstore": "2.3.4",
+    "randomstring": "1.2.3",
     "sequelize": "6.28.0",
     "sequelize-cli": "6.5.2"
   },

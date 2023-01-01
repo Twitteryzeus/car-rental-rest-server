@@ -1,15 +1,43 @@
 const Sequelize = require('sequelize');
 const { sequelize, models } = require('../../../sequelize-client');
+const { isEmpty } = require('lodash');
+const randomString = require('randomstring');
+const moment = require('moment');
 
 const loginOTP = async (req, res) => {
+  let transaction;
   try {
     const { User: UserModel } = models;
     const { body } = req;
     transaction = await sequelize.transaction({ isolationLevel: Sequelize.Transaction.ISOLATION_LEVELS.READ_COMMITTED });
 
-    res.status(200).json({ otp: 123456 });
+    if (isEmpty(body)) throw new Error(`Body can't be empty!`);
+
+    // Check If User Already Exists
+    const _userInstance = await UserModel.findOne({ where: body, raw: true, attributes: ['id'] });
+    const userModelInput = {
+      otp: randomString.generate({ length: 6, charset: 'numeric' }),
+      optExpiry: moment().add(15, 'minute')
+    };
+
+    if (!_userInstance) {
+      userModelInput.phoneNo = body.phoneNo;
+      await UserModel.create(userModelInput, { transaction });
+    } else {
+      await UserModel.update(userModelInput, {
+        where: { id: _userInstance.id },
+        transaction
+      });
+    }
+
+    await transaction.commit();
+    res.status(200).json({ otp: userModelInput.otp });
   } catch (error) {
+    if(transaction) {
+      await transaction.rollback();
+    }
     console.log('ERROR > USER > LOGIN OTP', error);
+    res.status(500).json({ error: error.message });
   }
 };
 
