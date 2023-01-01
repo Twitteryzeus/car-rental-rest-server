@@ -17,10 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('ADMIN','USER'),
       defaultValue: 'USER'
     },
-    opt: {
+    otp: {
       type: DataTypes.INTEGER
     },
-    optExpiry: {
+    otpExpiry: {
       type: DataTypes.DATE
     },
     geoLocation: {

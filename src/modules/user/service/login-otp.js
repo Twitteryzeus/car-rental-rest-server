@@ -16,12 +16,12 @@ const loginOTP = async (req, res) => {
     // Check If User Already Exists
     const _userInstance = await UserModel.findOne({ where: body, raw: true, attributes: ['id'] });
     const userModelInput = {
+      phoneNo: body.phoneNo,
       otp: randomString.generate({ length: 6, charset: 'numeric' }),
-      optExpiry: moment().add(15, 'minute')
+      otpExpiry: moment().add(15, 'minute')
     };
 
     if (!_userInstance) {
-      userModelInput.phoneNo = body.phoneNo;
       await UserModel.create(userModelInput, { transaction });
     } else {
       await UserModel.update(userModelInput, {
