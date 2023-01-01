@@ -14,9 +14,16 @@ const loginOTP = async (req, res) => {
     if (isEmpty(body)) throw new Error(`Body can't be empty!`);
 
     // Check If User Already Exists
-    const _userInstance = await UserModel.findOne({ where: body, raw: true, attributes: ['id'] });
+    const _userInstance = await UserModel.findOne({
+      where: {
+        phoneNo: body.phoneNo
+      },
+      raw: true,
+      attributes: ['id']
+    });
+
     const userModelInput = {
-      phoneNo: body.phoneNo,
+      ...body,
       otp: randomString.generate({ length: 6, charset: 'numeric' }),
       otpExpiry: moment().add(15, 'minute')
     };
@@ -33,7 +40,7 @@ const loginOTP = async (req, res) => {
     await transaction.commit();
     res.status(200).json({ otp: userModelInput.otp });
   } catch (error) {
-    if(transaction) {
+    if (transaction) {
       await transaction.rollback();
     }
     console.log('ERROR > USER > LOGIN OTP', error);

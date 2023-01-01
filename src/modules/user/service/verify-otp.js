@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const { sequelize, models } = require('../../../sequelize-client');
 const { isEmpty } = require('lodash');
 const moment = require('moment');
+const { generateToken } = require('../../../utils/authentication');
 
 const verifyOTP = async (req, res) => {
   let transaction;
@@ -22,10 +23,18 @@ const verifyOTP = async (req, res) => {
       }
     });
 
-    if(!_userInstance) throw new Error('User not found!'); 
+    if (!_userInstance) throw new Error('User not found!');
+
+    const userSessionInput = {
+      userId: _userInstance.id,
+      token: await generateToken(_userInstance.id),
+      expiresAt: moment().add(7, 'days')
+    };
+
+    await UserSessionModel.create(userSessionInput, { transaction });
 
     await transaction.commit();
-    res.status(200).json({ data: _userInstance });
+    res.status(200).json({ message: 'OTP Verified Successfully!' });
   } catch (error) {
     if (transaction) {
       await transaction.rollback();

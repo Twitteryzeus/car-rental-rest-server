@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE
     },
     geoLocation: {
-      type: DataTypes.GEOGRAPHY('POINT')
+      type: DataTypes.GEOMETRY('POINT')
     },
   }, {
     sequelize,
