@@ -2,6 +2,7 @@ const express = require('express');
 const config = require('./config');
 const { sequelize } = require('./sequelize-client');
 const boot = require('./boot');
+const userRouter = require('./modules/user/route');
 
 // Create Express App
 const app = express();
@@ -14,6 +15,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.status(200).json({ message: 'Welcome to Car Rental!' });
 });
+
+// Configure Routes
+app.use('/user', userRouter);
 
 sequelize.sync().then(async () => {
   app.listen(config.port, () => {
